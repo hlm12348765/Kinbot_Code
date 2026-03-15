@@ -1,0 +1,149 @@
+syntax = "proto3";
+package kinbot.world_state.v1;
+
+import "kinbot/common/v1/common.proto";
+
+option go_package = "github.com/hlm12348765/Kinbot_Code/contracts/kinbot/world_state/v1;worldstatev1";
+
+// ===== 9 类一级实体（对应 World State Schema §4-5）=====
+
+// 5.1 Person - 家庭中的人和长期交互主体
+message Person {
+  kinbot.common.v1.EntityMeta meta = 1;
+  string person_id = 2;
+  string identity_status = 3;       // identified, anonymous, uncertain
+  string display_name = 4;
+  string age_group = 5;             // elder, adult, child
+  string mobility_level = 6;       // normal, limited, assisted
+  string health_profile_id = 7;
+  string default_location = 8;
+  string care_priority = 9;        // normal, focused, urgent
+}
+
+// 5.2 RoleBinding - 角色与权限绑定
+message RoleBinding {
+  string binding_id = 1;
+  string person_id = 2;
+  kinbot.common.v1.Role role = 3;
+  repeated string auth_scope = 4;
+  string delegated_by = 5;
+  int32 priority_rank = 6;
+}
+
+// 5.3 Household - 家庭及看护网络
+message Household {
+  string household_id = 1;
+  repeated string member_ids = 2;
+  repeated CareNetworkEntry care_network = 3;
+  kinbot.common.v1.HomeMode home_mode = 4;
+}
+
+message CareNetworkEntry {
+  string name = 1;
+  string service_type = 2;         // family, community, hospital, pharmacy, delivery
+  string contact_ref = 3;
+  string responsibility_boundary = 4;
+}
+
+// 5.4 Place - 空间、区域和语义位置
+message Place {
+  string place_id = 1;
+  string category = 2;             // room, corridor, threshold, charging_point, risk_zone
+  string topology_parent = 3;
+  string navigability = 4;         // reachable, restricted, dangerous
+  string care_relevance = 5;       // normal, high（bedside, bathroom, medication_area）
+}
+
+// 5.5 Object - 可识别的重要物件
+message Object {
+  string object_id = 1;
+  string category = 2;             // furniture, obstacle, wearable, vital_device, medication_box, ...
+  string current_place_id = 3;
+  string ownership = 4;
+  map<string, string> state = 5;
+  repeated string care_tags = 6;
+}
+
+// 5.6 HealthProfile - 长期健康画像
+message HealthProfile {
+  string health_profile_id = 1;
+  string person_id = 2;
+  repeated string chronic_conditions = 3;
+  repeated string allergies = 4;
+  repeated string contraindications = 5;
+  repeated string medication_plan_ids = 6;
+  repeated string device_binding_refs = 7;
+}
+
+// 5.7 MedicationAsset - 药物与药仓
+message MedicationAsset {
+  string medication_id = 1;
+  string owner_person_id = 2;
+  string name = 3;
+  string form = 4;                  // tablet, capsule, liquid
+  string storage_place_id = 5;
+  int32 remaining_count = 6;
+  string expiry_date = 7;
+  string prescription_ref = 8;
+  string delivery_status = 9;      // not_ordered, in_transit, delivered
+}
+
+// 5.8 Task - 系统任务
+message Task {
+  string task_id = 1;
+  string task_type = 2;             // companion, remind, patrol, find_person, deliver_med, ...
+  string owner_person_id = 3;
+  string trigger_source = 4;       // user_request, system_detect, scheduled, cloud_trigger
+  string priority = 5;
+  string status = 6;               // pending, executing, blocked, completed, failed
+  string approval_status = 7;     // pending, approved, rejected
+}
+
+// 5.9 RiskEvent - 运行时风险和异常事件
+message RiskEvent {
+  string risk_event_id = 1;
+  string risk_type = 2;            // fall, unconscious_suspect, collision, privacy, ...
+  string subject_person_id = 3;
+  kinbot.common.v1.RiskLevel severity = 4;
+  string status = 5;              // candidate, confirmed, handling, closed
+  string linked_task_id = 6;
+}
+
+// ===== 运行时快照（对应 World State Schema §7）=====
+
+message BatteryState {
+  float level_percent = 1;
+  bool charging = 2;
+  bool return_to_charge_needed = 3;
+}
+
+message NetworkState {
+  string status = 1;               // online, weak, offline
+}
+
+message WearableFreshnessState {
+  string device_id = 1;
+  string acquisition_mode = 2;    // broadcast, sdk_bound, questionnaire_driven
+  int64 last_reading_ms = 3;
+  bool stale = 4;
+}
+
+// 决策上下文快照（对应 World State Schema §7 DecisionContextSnapshot）
+message DecisionContextSnapshot {
+  int64 timestamp_ms = 1;
+  repeated Person active_persons = 2;
+  repeated RiskEvent health_alerts = 3;
+  repeated Task active_tasks = 4;
+  NetworkState network_state = 5;
+  BatteryState battery_state = 6;
+  kinbot.common.v1.HomeMode home_mode = 7;
+  repeated WearableFreshnessState wearable_freshness = 8;
+  bool medication_urgency = 9;
+  string manual_service_state = 10;   // none, requested, connected, timeout
+}
+
+// 世界状态快照（三层模型的运行时交换格式）
+message WorldStateSnapshot {
+  DecisionContextSnapshot snapshot_state = 1;
+  int64 snapshot_version = 2;
+}

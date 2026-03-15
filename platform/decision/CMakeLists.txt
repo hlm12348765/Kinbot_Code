@@ -1,0 +1,3 @@
+add_library(kinbot_decision INTERFACE)
+target_include_directories(kinbot_decision INTERFACE include)
+target_link_libraries(kinbot_decision INTERFACE kinbot_contracts)

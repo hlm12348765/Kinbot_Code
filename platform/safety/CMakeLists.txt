@@ -1,0 +1,3 @@
+add_library(kinbot_safety INTERFACE)
+target_include_directories(kinbot_safety INTERFACE include)
+target_link_libraries(kinbot_safety INTERFACE kinbot_contracts)

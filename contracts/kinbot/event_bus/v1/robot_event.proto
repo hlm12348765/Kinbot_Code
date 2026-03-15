@@ -1,0 +1,56 @@
+syntax = "proto3";
+package kinbot.event_bus.v1;
+
+import "kinbot/common/v1/common.proto";
+
+option go_package = "github.com/hlm12348765/Kinbot_Code/contracts/kinbot/event_bus/v1;eventbusv1";
+
+// 进入 World State 的事件类型（对应 World State Schema §8，22 种）
+enum WorldEventType {
+  WORLD_EVENT_TYPE_UNSPECIFIED = 0;
+  PERSON_DETECTED = 1;
+  PERSON_IDENTIFIED = 2;
+  PERSON_LOST = 3;
+  VOICE_COMMAND_RECEIVED = 4;
+  FALL_SUSPECTED = 5;
+  ABNORMAL_VITAL_RECEIVED = 6;
+  WEARABLE_SIGNAL_RECEIVED = 7;
+  MEDICATION_DUE = 8;
+  MEDICATION_LOW_STOCK = 9;
+  TASK_CREATED = 10;
+  TASK_STATE_CHANGED = 11;
+  AUTHORIZATION_CHANGED = 12;
+  CAREGIVER_MODE_ENABLED = 13;
+  COMPARTMENT_OPENED = 14;
+  COMPARTMENT_CLOSED = 15;
+  COMPARTMENT_BLOCKED = 16;
+  ROBOT_NEAR_ELDER = 17;
+  ROBOT_DELIVERY_COMPLETED = 18;
+  MANUAL_SERVICE_REQUESTED = 19;
+  MANUAL_SERVICE_CONNECTED = 20;
+  MANUAL_SERVICE_TRANSFERRED = 21;
+  MANUAL_SERVICE_TIMEOUT = 22;
+}
+
+// 内部世界事件
+message WorldEvent {
+  string event_id = 1;
+  WorldEventType event_type = 2;
+  int64 timestamp_ms = 3;
+  string source_module = 4;            // 产生事件的模块
+  map<string, string> payload = 5;
+  kinbot.common.v1.PrivacyLevel privacy_level = 6;
+}
+
+// 上行事件（发送到云/伴生系统）
+message RobotEventUplink {
+  string uplink_id = 1;
+  string event_id = 2;                 // 源 WorldEvent 引用
+  string event_type = 3;
+  string subject_person_id = 4;
+  kinbot.common.v1.RiskLevel severity = 5;
+  map<string, string> payload = 6;     // 按隐私规则最小化
+  int64 timestamp_ms = 7;
+  string consent_ref = 8;              // 隐私同意引用
+  string audit_ref = 9;
+}

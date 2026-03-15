@@ -1,0 +1,15 @@
+# Kinbot 代码仓库 CODEOWNERS
+# 按 S1-S7 域团队映射
+
+/contracts/              @kinbot-architects
+/platform/runtime/       @kinbot-s1
+/platform/mobility/      @kinbot-s1
+/chassis/                @kinbot-s1
+/platform/perception/    @kinbot-s2
+/platform/interaction/   @kinbot-s3
+/platform/world_state/   @kinbot-s4
+/platform/decision/      @kinbot-s4
+/platform/safety/        @kinbot-s5
+/companion/              @kinbot-s6
+/platform/observability/ @kinbot-s7
+/tests/                  @kinbot-integration

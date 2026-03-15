@@ -1,0 +1,35 @@
+syntax = "proto3";
+package kinbot.safety.v1;
+
+import "kinbot/common/v1/common.proto";
+
+option go_package = "github.com/hlm12348765/Kinbot_Code/contracts/kinbot/safety/v1;safetyv1";
+
+// 待审批动作类型（对应 Safety API §7，11 类受控动作）
+enum ActionType {
+  ACTION_TYPE_UNSPECIFIED = 0;
+  NAVIGATE_TO_PERSON = 1;           // 主动靠近老人、到人提醒
+  OPEN_COMPARTMENT = 2;             // 打开储物仓递药
+  DELIVER_MEDICATION = 3;           // 送药到人
+  CONFIRM_MEDICATION_TAKEN = 4;     // 记录用户已服药
+  NOTIFY_FAMILY = 5;                // 通知家属
+  CONNECT_MANUAL_SERVICE = 6;       // 接入客服运营坐席
+  TRANSFER_MANUAL_SERVICE = 7;      // 将人工服务转给第三方
+  INVOKE_THIRD_PARTY_SERVICE = 8;   // 互联网医院、药店、配送平台
+  SHARE_SENSITIVE_DATA = 9;         // 外发健康、身份或病历信息
+  INTERRUPT_USER = 10;              // 主动打断用户
+  REQUEST_MEASUREMENT = 11;         // 发起问诊式补采或测量请求
+}
+
+// 一次待审批动作的标准化表达（对应 Safety API §9.1）
+message ActionProposal {
+  string proposal_id = 1;
+  ActionType action_type = 2;
+  kinbot.common.v1.Role initiator_role = 3;
+  string target_person_id = 4;
+  kinbot.common.v1.Executor executor = 5;
+  kinbot.common.v1.RiskLevel risk_level = 6;
+  map<string, string> payload = 7;          // 动作参数
+  string context_snapshot_ref = 8;          // DecisionContextSnapshot 引用
+  int64 requested_at_ms = 9;
+}

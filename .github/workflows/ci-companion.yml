@@ -1,0 +1,13 @@
+name: CI - Companion
+on:
+  push:
+    paths: ['companion/**']
+  pull_request:
+    paths: ['companion/**']
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Companion CI placeholder - add Flutter/Go/Java checks when code lands"

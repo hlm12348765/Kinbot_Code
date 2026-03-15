@@ -1,0 +1,50 @@
+# Build
+build/
+cmake-build-*/
+out/
+
+# Protobuf generated
+contracts/generated/
+*.pb.cc
+*.pb.h
+*_pb2.py
+*_pb2_grpc.py
+
+# C/C++
+*.o
+*.so
+*.a
+*.dylib
+*.d
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (companion/app, companion/ops)
+node_modules/
+
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+
+# Misc
+*.log
+compile_commands.json

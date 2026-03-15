@@ -1,0 +1,26 @@
+name: CI - Contracts
+on:
+  push:
+    paths: ['contracts/**']
+  pull_request:
+    paths: ['contracts/**']
+
+jobs:
+  proto-codegen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install protoc
+        uses: arduino/setup-protoc@v3
+      - name: Generate C++ bindings
+        run: |
+          mkdir -p contracts/generated/cpp
+          protoc --proto_path=contracts \
+            --cpp_out=contracts/generated/cpp \
+            $(find contracts/kinbot -name '*.proto')
+      - name: Generate Python bindings
+        run: |
+          mkdir -p contracts/generated/python
+          protoc --proto_path=contracts \
+            --python_out=contracts/generated/python \
+            $(find contracts/kinbot -name '*.proto')

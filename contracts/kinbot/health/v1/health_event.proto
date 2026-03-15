@@ -1,0 +1,57 @@
+syntax = "proto3";
+package kinbot.health.v1;
+
+import "kinbot/common/v1/common.proto";
+
+option go_package = "github.com/hlm12348765/Kinbot_Code/contracts/kinbot/health/v1;healthv1";
+
+// 健康事件类型（对应 Health Event Pipeline §管线）
+enum HealthEventType {
+  HEALTH_EVENT_TYPE_UNSPECIFIED = 0;
+  FALL_SUSPECTED = 1;               // 疑似跌倒
+  ABNORMAL_VITAL = 2;               // 异常生命体征
+  PROLONGED_LYING = 3;              // 久卧
+  NIGHT_BED_DEPARTURE = 4;          // 夜间离床
+  ABNORMAL_GAIT = 5;                // 异常步态
+  KITCHEN_HAZARD = 6;               // 厨房危险
+  MEDICATION_DUE = 7;               // 到点服药
+  MEDICATION_LOW_STOCK = 8;          // 药品库存不足
+}
+
+// 健康事件状态（7 级管线）
+enum HealthEventStatus {
+  HEALTH_EVENT_STATUS_UNSPECIFIED = 0;
+  CANDIDATE = 1;                    // Stage 1-2: 信号采集 + 融合
+  LOCALLY_CONFIRMED = 2;            // Stage 3: 本地二次确认
+  RISK_ASSESSED = 3;                // Stage 4: 风险分级完成
+  ACTION_PROPOSED = 4;              // Stage 5: 动作提案生成
+  ESCALATED = 5;                    // Stage 6: 升级到家属/坐席/第三方
+  CLOSED = 6;                       // Stage 7: 归档
+}
+
+// 健康事件候选（流经 7 级管线的数据）
+message HealthEventCandidate {
+  string event_id = 1;
+  HealthEventType event_type = 2;
+  HealthEventStatus status = 3;
+  string subject_person_id = 4;
+  kinbot.common.v1.RiskLevel risk_level = 5;
+  float confidence = 6;
+  repeated string signal_sources = 7;       // camera, wearable, ble_device, voice, ...
+  string recommended_action = 8;            // ActionType 字符串
+  int64 detected_at_ms = 9;
+  int64 confirmed_at_ms = 10;
+  string audit_ref = 11;
+}
+
+// 生命体征读数
+message VitalSignalReading {
+  string device_id = 1;
+  string signal_type = 2;          // heart_rate, spo2, blood_pressure, temperature
+  float value = 3;
+  float value_secondary = 4;       // 如血压舒张压
+  string unit = 5;
+  int64 measured_at_ms = 6;
+  string acquisition_mode = 7;    // broadcast, sdk_bound, questionnaire_driven
+  float freshness_seconds = 8;
+}

@@ -1,0 +1,8 @@
+add_subdirectory(runtime)
+add_subdirectory(mobility)
+add_subdirectory(perception)
+add_subdirectory(interaction)
+add_subdirectory(world_state)
+add_subdirectory(decision)
+add_subdirectory(safety)
+add_subdirectory(observability)

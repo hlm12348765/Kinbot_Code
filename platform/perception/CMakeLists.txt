@@ -1,0 +1,3 @@
+add_library(kinbot_perception INTERFACE)
+target_include_directories(kinbot_perception INTERFACE include)
+target_link_libraries(kinbot_perception INTERFACE kinbot_contracts)

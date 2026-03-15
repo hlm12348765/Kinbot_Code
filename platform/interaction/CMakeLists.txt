@@ -1,0 +1,3 @@
+add_library(kinbot_interaction INTERFACE)
+target_include_directories(kinbot_interaction INTERFACE include)
+target_link_libraries(kinbot_interaction INTERFACE kinbot_contracts)

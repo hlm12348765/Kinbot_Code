@@ -1,0 +1,28 @@
+syntax = "proto3";
+package kinbot.companion.v1;
+
+import "kinbot/common/v1/common.proto";
+
+option go_package = "github.com/hlm12348765/Kinbot_Code/contracts/kinbot/companion/v1;companionv1";
+
+// 推送到家属 App 的通知
+message FamilyNotification {
+  string notification_id = 1;
+  string event_id = 2;
+  kinbot.common.v1.RiskLevel severity = 3;
+  string title = 4;
+  string body = 5;
+  repeated string target_person_ids = 6;
+  bool requires_response = 7;
+  int64 sent_at_ms = 8;
+}
+
+// 家属远程确认响应
+message FamilyConfirmationResponse {
+  string confirmation_id = 1;
+  string responder_person_id = 2;
+  kinbot.common.v1.Role responder_role = 3;
+  bool approved = 4;
+  string comment = 5;
+  int64 responded_at_ms = 6;
+}

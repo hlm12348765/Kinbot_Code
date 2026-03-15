@@ -1,0 +1,3 @@
+add_library(kinbot_observability INTERFACE)
+target_include_directories(kinbot_observability INTERFACE include)
+target_link_libraries(kinbot_observability INTERFACE kinbot_contracts)

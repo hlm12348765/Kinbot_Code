@@ -1,0 +1,3 @@
+add_library(kinbot_mobility INTERFACE)
+target_include_directories(kinbot_mobility INTERFACE include)
+target_link_libraries(kinbot_mobility INTERFACE kinbot_contracts)

@@ -1,0 +1,3 @@
+add_library(kinbot_world_state INTERFACE)
+target_include_directories(kinbot_world_state INTERFACE include)
+target_link_libraries(kinbot_world_state INTERFACE kinbot_contracts)

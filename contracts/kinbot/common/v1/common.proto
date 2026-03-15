@@ -1,0 +1,66 @@
+syntax = "proto3";
+package kinbot.common.v1;
+
+option java_multiple_files = true;
+option go_package = "github.com/hlm12348765/Kinbot_Code/contracts/kinbot/common/v1;commonv1";
+
+// 所有实体的通用元数据（对应 World State Schema §3.3）
+message EntityMeta {
+  string id = 1;
+  string type = 2;
+  uint64 version = 3;
+  int64 created_at_ms = 4;
+  int64 updated_at_ms = 5;
+  string source = 6;            // camera, microphone, app, wearable, cloud, manual
+  float confidence = 7;         // 0.0-1.0
+  PrivacyLevel privacy_level = 8;
+}
+
+// 数据隐私等级（对应 World State Schema §10）
+enum PrivacyLevel {
+  PRIVACY_LEVEL_UNSPECIFIED = 0;
+  PUBLIC_RUNTIME = 1;           // 不含个人敏感信息的运行状态
+  PERSONAL_SENSITIVE = 2;       // 身份、语音文本、位置、行为习惯
+  BIOMETRIC_SENSITIVE = 3;      // 人脸、声纹、生命体征原始值
+  MEDICAL_SENSITIVE = 4;        // 病历摘要、医嘱、处方、购药记录
+}
+
+// 风险等级（对应 Safety API §8）
+enum RiskLevel {
+  RISK_LEVEL_UNSPECIFIED = 0;
+  LOW = 1;                      // 低风险，可在授权下自动执行
+  MEDIUM = 2;                   // 中风险，可自动执行但要记录原因
+  HIGH = 3;                     // 高风险，需要更严格审批或确认
+  CRITICAL = 4;                 // 极高风险，默认走人工确认或升级
+}
+
+// 角色（对应 Safety API §6.1）
+enum Role {
+  ROLE_UNSPECIFIED = 0;
+  ELDER = 1;                    // 老人本人
+  CHILD = 2;                    // 子女
+  CAREGIVER = 3;                // 保姆或照护者
+  VISITOR = 4;                  // 访客
+  ROBOT_SYSTEM = 5;             // 机器人自主触发
+  OPS_SEAT = 6;                 // 后台客服运营坐席
+  THIRD_PARTY_PLATFORM = 7;    // 互联网医院、药店、配送、内容平台等
+}
+
+// 执行主体
+enum Executor {
+  EXECUTOR_UNSPECIFIED = 0;
+  ROBOT = 1;
+  APP = 2;
+  CLOUD = 3;
+  THIRD_PARTY = 4;
+}
+
+// 家庭模式
+enum HomeMode {
+  HOME_MODE_UNSPECIFIED = 0;
+  DAYTIME = 1;
+  NIGHTTIME = 2;
+  AWAY = 3;
+  RESTING = 4;
+  ANOMALY_ACTIVE = 5;
+}

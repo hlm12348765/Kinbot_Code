@@ -1,0 +1,39 @@
+name: CI - Platform
+on:
+  push:
+    paths: ['platform/**', 'contracts/**', 'chassis/**', 'CMakeLists.txt']
+  pull_request:
+    paths: ['platform/**', 'contracts/**', 'chassis/**', 'CMakeLists.txt']
+
+jobs:
+  build-host:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake protobuf-compiler libprotobuf-dev
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Debug
+      - name: Build
+        run: cmake --build build -j$(nproc)
+
+  lint-cpp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: clang-format check
+        run: |
+          find platform/ chassis/ -name '*.h' -o -name '*.cpp' -o -name '*.cc' | \
+            xargs --no-run-if-empty clang-format --dry-run --Werror || true
+
+  lint-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install ruff
+      - run: ruff check platform/ --select E,W,F || true

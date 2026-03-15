@@ -1,0 +1,63 @@
+syntax = "proto3";
+package kinbot.safety.v1;
+
+import "kinbot/common/v1/common.proto";
+
+option go_package = "github.com/hlm12348765/Kinbot_Code/contracts/kinbot/safety/v1;safetyv1";
+
+// 审批结果类型（对应 Safety API §11，6 种决策结果）
+enum ApprovalResult {
+  APPROVAL_RESULT_UNSPECIFIED = 0;
+  APPROVED = 1;                     // 动作可以直接执行
+  REJECTED = 2;                     // 动作不能执行
+  DOWNGRADED = 3;                   // 降级为低风险版本
+  CONFIRMATION_REQUIRED = 4;        // 需要额外确认
+  MANUAL_SERVICE_REQUIRED = 5;      // 交给后台人工服务
+  FAULT_PROTECTION_REQUIRED = 6;    // 命中关键安全故障，进入故障保护
+}
+
+// 审批约束
+message ApprovalConstraints {
+  string speed_limit = 1;
+  bool must_announce_before_approach = 2;
+  bool anti_pinch_required = 3;
+  bool handoff_confirmation_required = 4;
+  int64 max_duration_ms = 5;
+  repeated string allowed_data_fields = 6;
+}
+
+// 确认对象
+message ConfirmationTarget {
+  kinbot.common.v1.Role role = 1;
+  string person_id = 2;
+  int64 timeout_ms = 3;
+}
+
+// 状态转移建议
+message StateTransitionHint {
+  string top_state = 1;
+  string business_state = 2;
+}
+
+// 审批模块返回的标准结果（对应 Safety API §9.3）
+message ApprovalDecision {
+  string decision_id = 1;
+  string proposal_id = 2;
+  ApprovalResult result = 3;
+  repeated string reason_codes = 4;             // AUTH_SCOPE_MISSING, FAULT_F1_ACTIVE 等
+  ApprovalConstraints constraints = 5;
+  StateTransitionHint state_transition_hint = 6;
+  repeated ConfirmationTarget confirmation_targets = 7;
+  string manual_transfer_target = 8;
+  string audit_ref = 9;
+  int64 decided_at_ms = 10;
+}
+
+// 确认请求（对应 Safety API §9.4）
+message ConfirmationRequest {
+  string confirmation_id = 1;
+  string decision_id = 2;
+  repeated kinbot.common.v1.Role required_roles = 3;
+  int64 timeout_ms = 4;
+  string fallback_action = 5;
+}
