@@ -5,8 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Protobuf 接口定义
-add_subdirectory(contracts)
+# Protobuf 接口定义（需要安装 protobuf，Phase 0 可关闭）
+option(KINBOT_BUILD_CONTRACTS "Build protobuf contracts" OFF)
+if(KINBOT_BUILD_CONTRACTS)
+    add_subdirectory(contracts)
+endif()
 
 # 端侧运行栈
 add_subdirectory(platform)
